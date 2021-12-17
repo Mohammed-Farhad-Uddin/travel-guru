@@ -1,0 +1,12 @@
+nav{
+    padding: 15px;
+}
+nav li{
+    display: inline-block;
+    margin-left: 55px;
+    
+}
+nav a{
+    text-decoration: none;
+    color: black;
+}
