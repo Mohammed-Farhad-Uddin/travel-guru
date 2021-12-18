@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { createContext, useState } from 'react';
 import {
   BrowserRouter as Router,
   Route,
@@ -12,35 +12,46 @@ import Book from './Components/Book/Book';
 import PrivateRoute from './Components/PrivateRoute/PrivateRoute';
 import Info from './Components/Info/Info';
 
+export const UserContext = createContext()
+
+
 function App() {
+  const [loginUser, setLoginUser] = useState({
+    isSignIn: false,
+    displayName: '',
+    email: '',
+    password: '',
+    phoneNumber: '',
+    account:false,
+    errorMsg:''
+  })
+
+
   return (
-    <>
+    <UserContext.Provider value={[loginUser, setLoginUser]}>
       <Router>
         <Switch>
-          <Route exact path='/home'>
+          <Route exact path='/'>
             <Home></Home>
           </Route>
-          <Route exact path='/'>
+          <Route exact path='/home'>
             <Home></Home>
           </Route>
           <Route exact path='/login'>
             <Login></Login>
           </Route>
-          {/* <PrivateRoute path="/book">
-          <Book></Book>
-        </PrivateRoute> */}
+          <PrivateRoute path="/info">
+            <Info></Info>
+          </PrivateRoute>
           <Route exact path='/book'>
             <Book></Book>
           </Route>
-
           <Route exact path='/info'>
             <Info></Info>
           </Route>
-
         </Switch>
-
       </Router>
-    </>
+    </UserContext.Provider>
   );
 }
 

@@ -10,11 +10,16 @@ import 'react-date-range/dist/styles.css'; // main style file
 import 'react-date-range/dist/theme/default.css'; // theme css file
 import DateRangePicker from '@mui/lab/DateRangePicker';
 import Header from '../Header/Header';
+import { useHistory } from 'react-router-dom/cjs/react-router-dom.min';
 
 
 
 const Book = () => {
+  const history=useHistory()
   const [value, setValue] =useState([null, null]);
+  const handleSubmitBooking=()=>{
+        history.push('/info')
+  }
   return (
     <>
       <Container fluid className='background'>
@@ -29,7 +34,7 @@ const Book = () => {
           </Col>
 
           <Col className='form' sm={6} md={8}>
-            <Form>
+            <Form onSubmit={handleSubmitBooking}>
               <LocalizationProvider dateAdapter={AdapterDateFns}>
                 <DateRangePicker
                   startText="Start"
@@ -40,9 +45,9 @@ const Book = () => {
                   }}
                   renderInput={(startProps, endProps) => (
                     <React.Fragment>
-                      <TextField {...startProps} />
+                      <TextField {...startProps} required />
                       <Box sx={{ mx: 2 }}> to </Box>
-                      <TextField {...endProps} />
+                      <TextField {...endProps} required/>
                     </React.Fragment>
                   )}
                 />
@@ -50,21 +55,20 @@ const Book = () => {
               <br></br>
               <Form.Group className="mb-3" controlId="formBasicEmail">
 
-                <Form.Control type="text" placeholder="From" />
+                <Form.Control type="text" placeholder="From" required/>
               </Form.Group>
               <Form.Group className="mb-3" controlId="formBasicPassword">
 
-                <Form.Control type="text" placeholder="To" />
+                <Form.Control type="text" placeholder="To" required/>
               </Form.Group>
               <Form.Group className="mb-3" controlId="formBasicCheckbox">
-                <Form.Check type="checkbox" label="Check me out" />
+                <Form.Check type="checkbox" label="Check me out" required />
               </Form.Group>
               <Button style={{ textAlign: 'center', width: '100%' }} variant="warning" type="submit">
                 Submit
               </Button>
             </Form>
           </Col>
-
         </Row>
       </Container>
     </>
