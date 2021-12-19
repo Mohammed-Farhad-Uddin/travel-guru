@@ -15,11 +15,34 @@ import { useHistory } from 'react-router-dom/cjs/react-router-dom.min';
 
 
 const Book = () => {
-  const history=useHistory()
-  const [value, setValue] =useState([null, null]);
-  const handleSubmitBooking=()=>{
-        history.push('/info')
+  const history = useHistory()
+  const [value, setValue] = useState([null, null]);
+  const [book,setBook]=useState({
+    from:'',
+    to:''
+  })
+
+  const handleSubmitBooking = () => {
+    history.push('/info')
+    const bookinfo={...value,...book}
+    fetch('http://localhost:5000/book', {
+      method: 'POST',
+      body: JSON.stringify(bookinfo),
+      headers: {
+        'Content-type': 'application/json; charset=UTF-8',
+      },
+    })
+      .then((response) => response.json())
+      .then((json) => console.log(json));
   }
+
+  const handleBlur=(e)=>{
+    const newBook={...book}
+    newBook[e.target.name]=e.target.value
+    setBook(newBook)
+  }
+ 
+
   return (
     <>
       <Container fluid className='background'>
@@ -47,7 +70,7 @@ const Book = () => {
                     <React.Fragment>
                       <TextField {...startProps} required />
                       <Box sx={{ mx: 2 }}> to </Box>
-                      <TextField {...endProps} required/>
+                      <TextField {...endProps} required />
                     </React.Fragment>
                   )}
                 />
@@ -55,11 +78,11 @@ const Book = () => {
               <br></br>
               <Form.Group className="mb-3" controlId="formBasicEmail">
 
-                <Form.Control type="text" placeholder="From" required/>
+                <Form.Control type="text" onBlur={handleBlur} name="from" placeholder="From" required />
               </Form.Group>
               <Form.Group className="mb-3" controlId="formBasicPassword">
 
-                <Form.Control type="text" placeholder="To" required/>
+                <Form.Control type="text" onBlur={handleBlur} name="to" placeholder="To" required />
               </Form.Group>
               <Form.Group className="mb-3" controlId="formBasicCheckbox">
                 <Form.Check type="checkbox" label="Check me out" required />

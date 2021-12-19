@@ -11,6 +11,7 @@ import Login from './Components/Login/Login';
 import Book from './Components/Book/Book';
 import PrivateRoute from './Components/PrivateRoute/PrivateRoute';
 import Info from './Components/Info/Info';
+import NotFound from './Components/NotFound/NotFound';
 
 export const UserContext = createContext()
 
@@ -48,6 +49,9 @@ function App() {
           </Route>
           <Route exact path='/info'>
             <Info></Info>
+          </Route>
+          <Route exact path='*'>
+            <NotFound></NotFound>
           </Route>
         </Switch>
       </Router>

@@ -6,7 +6,7 @@ import Header from '../Header/Header';
 import { initializeApp } from "firebase/app";
 import { firebaseConfig } from './firebase-config';
 import { getAuth, GoogleAuthProvider, signInWithPopup, signOut } from "firebase/auth";
-import { createUserWithEmailAndPassword, updateProfile, signInWithEmailAndPassword } from "firebase/auth";
+import { createUserWithEmailAndPassword, updateProfile, signInWithEmailAndPassword, sendEmailVerification } from "firebase/auth";
 import { UserContext } from '../../App';
 import { useHistory, useLocation } from 'react-router-dom/cjs/react-router-dom.min';
 
@@ -40,32 +40,43 @@ const Login = () => {
                 })
 
                 history.replace(from)
+                fetch('http://localhost:5000/loginUser', {
+                    method: 'POST',
+                    body: JSON.stringify(loginUser),
+                    headers: {
+                        'Content-type': 'application/json; charset=UTF-8',
+                    },
+                })
+                // .then((response) => response.json())
+                // .then((json) => console.log(json));
 
             }).catch((error) => {
                 const errorCode = error.code;
                 const errorMessage = error.message;
                 const email = error.email;
                 const credential = GoogleAuthProvider.credentialFromError(error);
-
             });
     }
 
-    const handleGoogleSignOut = () => {
-        const auth = getAuth();
-        signOut(auth)
-            .then(() => {
-                setLoginUser({
-                    isSignIn: false,
-                    displayName: '',
-                    email: '',
-                    password: '',
-                    phoneNumber: '',
-                    account: false
-                })
-            }).catch((error) => {
-                // An error happened.
-            });
-    }
+    //  const handleSignOut = () => {
+    //         const auth = getAuth();
+    //         signOut(auth)
+    //         .then(() => {
+    //                 setLoginUser({
+    //                     isSignIn: false,
+    //                     displayName: '',
+    //                     email: '',
+    //                     password: '',
+    //                     phoneNumber: '',
+    //                     account: false,
+    //                     errorMsg: ''
+    //                 })
+    //                 history.replace(from)
+    //             }).catch((error) => {
+    //                 // An error happened.
+    //             });
+    //     }
+
 
     const handleBlur = (e) => {
         let isValid = true;
@@ -88,48 +99,67 @@ const Login = () => {
     }
     const handleSubmit = (e) => {
         e.preventDefault();
-        if (loginUser.displayName && loginUser.email && loginUser.password) {
+        if (loginUser.displayName && loginUser.email && loginUser.password && loginUser.phoneNumber) {
             const auth = getAuth();
             createUserWithEmailAndPassword(auth, loginUser.email, loginUser.password)
                 .then((userCredential) => {
                     const user = userCredential.user;
                     // console.log(user)
+                    verifyEmail();
                     updateUserName(loginUser.displayName, loginUser.phoneNumber)
                     const newIsSignInUser = { ...loginUser }
-                    newIsSignInUser.isSignIn = true
+                    newIsSignInUser.isSignIn = true;
+                    newIsSignInUser.account = false;
                     setLoginUser(newIsSignInUser)
                     // console.log(loginUser)
-
                     history.replace(from)
-
+                    fetch('http://localhost:5000/loginUser', {
+                        method: 'POST',
+                        body: JSON.stringify(loginUser),
+                        headers: {
+                            'Content-type': 'application/json; charset=UTF-8',
+                        },
+                    })
                 })
                 .catch((error) => {
                     if (error) {
                         const haveAccount = { ...loginUser }
                         haveAccount.account = true;
-                        haveAccount.errorMsg=error.Message
+                        haveAccount.errorMsg = error.message
                         setLoginUser(haveAccount)
                     }
                 });
         }
 
-        if(anAccount && loginUser.email && loginUser.password) {
+        if (anAccount && loginUser.email && loginUser.password) {
             const auth = getAuth();
             signInWithEmailAndPassword(auth, loginUser.email, loginUser.password)
                 .then((userCredential) => {
                     const user = userCredential.user;
+                    console.log(user)
                     const newIsSignInUser = { ...loginUser }
-                    newIsSignInUser.isSignIn = true
+                    newIsSignInUser.displayName = user.displayName;
+                    newIsSignInUser.phoneNumber = user.phoneNumber;
+                    newIsSignInUser.isSignIn = true;
+                    newIsSignInUser.account = false;
                     setLoginUser(newIsSignInUser)
                     // console.log(loginUser)
 
                     history.replace(from)
+                
+                    fetch('http://localhost:5000/loginUser', {
+                        method: 'POST',
+                        body: JSON.stringify(loginUser),
+                        headers: {
+                            'Content-type': 'application/json; charset=UTF-8',
+                        },
+                    })
                 })
                 .catch((error) => {
                     if (error) {
                         const haveAccount = { ...loginUser }
                         haveAccount.account = true;
-                        haveAccount.errorMsg=error.Message
+                        haveAccount.errorMsg = error.message
                         setLoginUser(haveAccount)
                     }
                 });
@@ -148,15 +178,22 @@ const Login = () => {
             console.log(error)
         });
     }
+    const verifyEmail = () => {
+        const auth = getAuth();
+        sendEmailVerification(auth.currentUser)
+            .then(() => {
+                // Email verification sent!
+            });
+    }
 
     return (
         <div style={{ background: "white" }}>
             <Header></Header>
             <div style={{ width: '400px', margin: "20px auto", border: '1px solid gray', padding: '20px', borderRadius: '10px' }}>
                 <Form onSubmit={handleSubmit}>
-                    <Form.Group style={{display:anAccount?"none":"block"}} className="mb-3" controlId="formBasicEmail">
+                    <Form.Group style={{ display: anAccount ? "none" : "block" }} className="mb-3" controlId="formBasicEmail">
                         <Form.Label>Your FullName</Form.Label>
-                        <Form.Control onBlur={handleBlur} name='displayName' type="text" placeholder="Full Name" required />
+                        <Form.Control onBlur={handleBlur} name='displayName' type="text" placeholder="Full Name" />
                     </Form.Group>
                     <Form.Group className="mb-3" controlId="formBasicEmail">
                         <Form.Label>Email address</Form.Label>
@@ -170,7 +207,7 @@ const Login = () => {
                         <Form.Label>Password</Form.Label>
                         <Form.Control onBlur={handleBlur} name='password' type="password" placeholder="Password" />
                     </Form.Group>
-                    <Form.Group style={{display:anAccount?"none":"block"}} className="mb-3" controlId="formBasicEmail">
+                    <Form.Group style={{ display: anAccount ? "none" : "block" }} className="mb-3" controlId="formBasicEmail">
                         <Form.Label>Phone Number</Form.Label>
                         <Form.Control onBlur={handleBlur} name='phoneNumber' type="number" placeholder="Enter Phone Number" />
                     </Form.Group>
@@ -178,7 +215,7 @@ const Login = () => {
                         <Form.Check type="checkbox" label="I agree terms and condition" required />
                     </Form.Group>
                     {
-                        anAccount ? <Button variant="primary" type="submit"> Log Up </Button> : <Button variant="primary" type="submit"> Sign Up </Button>
+                        anAccount ? <Button variant="primary" type="submit"> Log In </Button> : <Button variant="primary" type="submit"> Sign Up </Button>
                     }
                     &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
                     Already have <Link onClick={() => setAnAccount(!anAccount)}> an account

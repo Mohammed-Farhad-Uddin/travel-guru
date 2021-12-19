@@ -9,6 +9,7 @@ import { useHistory, useLocation } from 'react-router-dom/cjs/react-router-dom.m
 
 const Header = () => {
  const [loginUser,setLoginUser]=useContext(UserContext)
+
  let history = useHistory();
  let location = useLocation();
  let { from } = location.state || { from: { pathname: "/" } };
@@ -19,7 +20,8 @@ const Header = () => {
         email: '',
         password: '',
         phoneNumber: '',
-        account:false
+        account:false,
+        errorMsg:''
      })
      history.replace(from)
  }
@@ -59,12 +61,11 @@ const Header = () => {
                 </li>
                 <li>
                     {
-                        loginUser.isSignIn ? <Link to="/login"> <Button variant="danger" onClick={handleSignOut}>{loginUser.displayName}</Button></Link>  : <Link to='/login'><Button variant="warning">Login</Button>{' '}</Link> 
+                        loginUser.isSignIn ?  <Button variant="danger" onClick={handleSignOut}>{loginUser.displayName}</Button> : <Link to='/login'><Button variant="warning">Login</Button>{' '}</Link> 
                     }
                 </li>
             </ul>
         </nav>
-
     );
 };
 
