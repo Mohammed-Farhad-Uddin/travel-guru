@@ -1,9 +1,10 @@
 nav{
     padding: 15px;
+    margin-bottom: 20px;
 }
 nav li{
     display: inline-block;
-    margin-left: 55px;
+    margin-left: 45px;
     
 }
 nav a{

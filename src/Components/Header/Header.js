@@ -2,7 +2,7 @@ import React, { useContext, useState } from 'react';
 import logo from '../../Images/Logo.png';
 import { Link } from 'react-router-dom';
 import './Header.css';
-import { Button,Form, FormControl } from 'react-bootstrap';
+import { Button, Dropdown , DropdownButton, Form , FormControl } from 'react-bootstrap';
 import { UserContext } from '../../App';
 import { useHistory, useLocation } from 'react-router-dom/cjs/react-router-dom.min';
 
@@ -61,7 +61,14 @@ const Header = () => {
                 </li>
                 <li>
                     {
-                        loginUser.isSignIn ?  <Button variant="danger" onClick={handleSignOut}>{loginUser.displayName}</Button> : <Link to='/login'><Button variant="warning">Login</Button>{' '}</Link> 
+                        loginUser.isSignIn ? <Dropdown>
+                        <Dropdown.Toggle variant="danger" id="dropdown-basic">
+                        {loginUser.displayName}
+                        </Dropdown.Toggle>
+                        <Dropdown.Menu>
+                          <Dropdown.Item onClick={handleSignOut}>Sign Out</Dropdown.Item>                       
+                        </Dropdown.Menu>
+                        </Dropdown> : <Link to='/login'><Button variant="warning">Login</Button>{' '}</Link> 
                     }
                 </li>
             </ul>

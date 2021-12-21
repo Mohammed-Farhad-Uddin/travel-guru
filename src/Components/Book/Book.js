@@ -17,14 +17,14 @@ import { useHistory } from 'react-router-dom/cjs/react-router-dom.min';
 const Book = () => {
   const history = useHistory()
   const [value, setValue] = useState([null, null]);
-  const [book,setBook]=useState({
-    from:'',
+  const [book, setBook] = useState({
+    from: '',
     to:''
   })
 
   const handleSubmitBooking = () => {
     history.push('/info')
-    const bookinfo={...value,...book}
+    const bookinfo = { ...value, ...book}
     fetch('http://localhost:5000/book', {
       method: 'POST',
       body: JSON.stringify(bookinfo),
@@ -36,12 +36,12 @@ const Book = () => {
       .then((json) => console.log(json));
   }
 
-  const handleBlur=(e)=>{
-    const newBook={...book}
-    newBook[e.target.name]=e.target.value
+  const handleChange = (e) => {
+    const newBook = { ...book }
+    newBook[e.target.name] = e.target.value
     setBook(newBook)
   }
- 
+
 
   return (
     <>
@@ -76,14 +76,40 @@ const Book = () => {
                 />
               </LocalizationProvider>
               <br></br>
-              <Form.Group className="mb-3" controlId="formBasicEmail">
+              <Form.Group className="mb-3" controlId="formBasicSelect">
+                <Form.Control
+                  as="select"
+                  value={book.from}
+                  onChange={handleChange}
+                  name="from"
+                  placeholder='Select Destination' required
+                >
+                  <option value="Dhaka">Dhaka</option>
+                  <option value="Chittagong">Chittagong</option>
+                  <option value="Kulna">Kulna</option>
+                </Form.Control>
+              </Form.Group>
+              {/* <Form.Group className="mb-3" controlId="formBasicEmail">
 
                 <Form.Control type="text" onBlur={handleBlur} name="from" placeholder="From" required />
+              </Form.Group> */}
+              <Form.Group className="mb-3" controlId="formBasicSelect">
+                <Form.Control
+                  as="select"
+                  value={book.to}
+                  onChange={handleChange}
+                  name="to"
+                  placeholder='Select Destination' required
+                >
+                  <option value="Cox's Bazar">Cox's Bazar</option>
+                  <option value="Sundorbon">Sundorbon</option>
+                  <option value="Sreemongol">Sreemongol</option>
+                </Form.Control>
               </Form.Group>
-              <Form.Group className="mb-3" controlId="formBasicPassword">
+              {/* <Form.Group className="mb-3" controlId="formBasicPassword">
 
                 <Form.Control type="text" onBlur={handleBlur} name="to" placeholder="To" required />
-              </Form.Group>
+              </Form.Group> */}
               <Form.Group className="mb-3" controlId="formBasicCheckbox">
                 <Form.Check type="checkbox" label="Check me out" required />
               </Form.Group>
