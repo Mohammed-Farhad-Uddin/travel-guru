@@ -186,7 +186,7 @@ const Login = () => {
             });
     }
 
-    const handleResetPassword = (email) => {
+    const handleResetPassword = (email) => {//m-46
         const auth = getAuth();
         sendPasswordResetEmail(auth, email)
             .then(() => {
