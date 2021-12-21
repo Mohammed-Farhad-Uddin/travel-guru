@@ -6,7 +6,7 @@ import Header from '../Header/Header';
 import { initializeApp } from "firebase/app";
 import { firebaseConfig } from './firebase-config';
 import { getAuth, GoogleAuthProvider, signInWithPopup, signOut } from "firebase/auth";
-import { createUserWithEmailAndPassword, updateProfile, signInWithEmailAndPassword, sendEmailVerification } from "firebase/auth";
+import { createUserWithEmailAndPassword, updateProfile, signInWithEmailAndPassword, sendEmailVerification, sendPasswordResetEmail } from "firebase/auth";
 import { UserContext } from '../../App';
 import { useHistory, useLocation } from 'react-router-dom/cjs/react-router-dom.min';
 
@@ -146,7 +146,7 @@ const Login = () => {
                     // console.log(loginUser)
 
                     history.replace(from)
-                
+
                     fetch('http://localhost:5000/loginUser', {
                         method: 'POST',
                         body: JSON.stringify(loginUser),
@@ -186,6 +186,19 @@ const Login = () => {
             });
     }
 
+    const handleResetPassword = (email) => {
+        const auth = getAuth();
+        sendPasswordResetEmail(auth, email)
+            .then(() => {
+                // Password reset email sent!
+                // ..
+            })
+            .catch((error) => {
+                 console.log(error)
+            });
+    }
+
+
     return (
         <div style={{ background: "white" }}>
             <Header></Header>
@@ -220,6 +233,9 @@ const Login = () => {
                     &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
                     Already have <Link onClick={() => setAnAccount(!anAccount)}> an account
                     </Link>
+                    <div className='mt-3'>
+                    <Button variant='secondary' onClick={() => handleResetPassword(loginUser.email)}>Reset Password</Button>
+                    </div>
                 </Form>
                 <div style={{ textAlign: "center", marginTop: "20px", fontSize: "15px" }}>
                     {
